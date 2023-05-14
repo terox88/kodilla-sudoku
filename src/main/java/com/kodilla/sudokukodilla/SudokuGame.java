@@ -39,10 +39,10 @@ public class SudokuGame {
                         if (element.getValue() != -1 && board.getBoard().get(y).getSudokuRow().get(x).getPossibleNumbers().contains(element.getValue()) && board.getBoard().get(y).getSudokuRow().get(x).getPossibleNumbers().size() > 1) {
                             board.getBoard().get(y).getSudokuRow().get(x).getPossibleNumbers().remove(Integer.valueOf(element.getValue()));
                             result = true;
-                        }else if (element.getValue() != -1 && board.getBoard().get(y).getSudokuRow().get(x).getPossibleNumbers().size() == 1) {
-                                if (board.getBoard().get(y).getSudokuRow().get(x).getPossibleNumbers().contains(element.getValue())) {
-                                    throw new CanotResolveSudokuException();
-                                }
+                        } else if (element.getValue() != -1 && board.getBoard().get(y).getSudokuRow().get(x).getPossibleNumbers().size() == 1) {
+                            if (board.getBoard().get(y).getSudokuRow().get(x).getPossibleNumbers().contains(element.getValue())) {
+                                throw new CanotResolveSudokuException();
+                            }
 
                         }
                     }
@@ -52,13 +52,13 @@ public class SudokuGame {
                     }
                 } else {
                     for (SudokuElement element : board.getBoard().get(y).getSudokuRow()) {
-                        if(board.getBoard().get(y).getSudokuRow().get(x).getValue() == element.getValue() && board.getBoard().get(y).getSudokuRow().get(x) != element) {
+                        if (board.getBoard().get(y).getSudokuRow().get(x).getValue() == element.getValue() && board.getBoard().get(y).getSudokuRow().get(x) != element) {
                             throw new CanotResolveSudokuException();
                         }
                     }
                 }
-                    }
-                }
+            }
+        }
         return result;
     }
 
@@ -83,7 +83,7 @@ public class SudokuGame {
                         board.getBoard().get(y).getSudokuRow().get(x).enterValue();
                         result = true;
                     }
-                } else  {
+                } else {
                     for (int i = 0; i < board.getBoard().size(); i++) {
                         SudokuElement element = board.getBoard().get(i).getSudokuRow().get(x);
                         if (board.getBoard().get(y).getSudokuRow().get(x).getValue() == element.getValue() && board.getBoard().get(y).getSudokuRow().get(x) != element) {
@@ -138,12 +138,14 @@ public class SudokuGame {
         }
         return result;
     }
+
     public boolean allCheck() throws CanotResolveSudokuException {
         return checkRows() || checkColumns()
-                || fieldCheck(0,0)|| fieldCheck(0,3) || fieldCheck(0, 6)
-                || fieldCheck(3,0) || fieldCheck(3,3) || fieldCheck(3, 6)
-                ||fieldCheck(6, 0) || fieldCheck(6, 3) || fieldCheck(6, 6);
+                || fieldCheck(0, 0) || fieldCheck(0, 3) || fieldCheck(0, 6)
+                || fieldCheck(3, 0) || fieldCheck(3, 3) || fieldCheck(3, 6)
+                || fieldCheck(6, 0) || fieldCheck(6, 3) || fieldCheck(6, 6);
     }
+
     public boolean isResolved() {
         long result = board.getBoard().stream().flatMap(row -> row.getSudokuRow().stream())
                 .map(val -> val.getValue())
@@ -151,12 +153,13 @@ public class SudokuGame {
                 .count();
         return result == 0;
     }
-    public SudokuData findGuessedValue () {
-        SudokuElement element = new SudokuElement(-1, List.of(0,1,2,3,4,5,6,7,8,9));
+
+    public SudokuData findGuessedValue() {
+        SudokuElement element = new SudokuElement(-1, List.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9));
         SudokuData data = null;
         for (int y = 0; y < board.getBoard().size(); y++) {
             for (int x = 0; x < board.getBoard().size(); x++) {
-                if(board.getBoard().get(y).getSudokuRow().get(x).getValue() == -1 && board.getBoard().get(y).getSudokuRow().get(x).getPossibleNumbers().size() < element.getPossibleNumbers().size()) {
+                if (board.getBoard().get(y).getSudokuRow().get(x).getValue() == -1 && board.getBoard().get(y).getSudokuRow().get(x).getPossibleNumbers().size() < element.getPossibleNumbers().size()) {
                     element = board.getBoard().get(y).getSudokuRow().get(x);
                     data = new SudokuData(x, y, element.getPossibleNumbers().get(0));
 
@@ -165,43 +168,47 @@ public class SudokuGame {
         }
         return data;
     }
+
     public void restoreBoard(BackupBoard restoredBoard) {
         board = restoredBoard.getBackupBoard();
         int x = restoredBoard.getGuessedElement().getX();
         int y = restoredBoard.getGuessedElement().getY();
         int value = restoredBoard.getGuessedElement().getValue();
-        if(board.getBoard().get(y).getSudokuRow().get(x).getPossibleNumbers().size() > 1) {
+        if (board.getBoard().get(y).getSudokuRow().get(x).getPossibleNumbers().size() > 1) {
             board.getBoard().get(y).getSudokuRow().get(x).getPossibleNumbers().remove(Integer.valueOf(value));
         }
         backtrack.remove(restoredBoard);
 
     }
-    public void backupMaking (SudokuData data) {
-        backtrack.add(new BackupBoard(board.deepCopy(),data));
+
+    public void backupMaking(SudokuData data) {
+        backtrack.add(new BackupBoard(board.deepCopy(), data));
     }
-    public void guessing (SudokuData data) {
+
+    public void guessing(SudokuData data) {
         board.getBoard().get(data.getY()).getSudokuRow().get(data.getX()).setValue(data.getValue());
     }
+
     public boolean sudokuResolve() {
         boolean isResolved = false;
         while (!isResolved) {
             board = new SudokuBoard();
             String userData = handler.getUserData().toUpperCase();
-            if(userData.equals("SUDOKU")) {
+            if (userData.equals("SUDOKU")) {
                 boolean end = false;
                 while (!end) {
                     boolean boardCheck = false;
                     try {
                         boardCheck = allCheck();
                     } catch (CanotResolveSudokuException e) {
-                        if(backtrack.size() > 0) {
+                        if (backtrack.size() > 0) {
                             restoreBoard(backtrack.get(0));
                         } else {
                             System.out.println("This sudoku cannot be solved");
                             end = true;
                         }
                     }
-                    if(boardCheck) {
+                    if (boardCheck) {
                         end = isResolved();
 
                     } else {
@@ -219,12 +226,19 @@ public class SudokuGame {
 
             } else {
                 List<SudokuData> sudokuData = new ArrayList<>();
-                while (sudokuData.size() == 0) {
+                boolean done = false;
+                while (!done) {
                     sudokuData = handler.createSudokuData(userData);
+                    if (sudokuData.size() > 0) {
+                        done = true;
+                    } else {
+                        userData = handler.getUserData();
+                    }
                 }
                 setTheBoard(sudokuData);
                 System.out.println(board);
             }
+
         }
         return isResolved;
     }
