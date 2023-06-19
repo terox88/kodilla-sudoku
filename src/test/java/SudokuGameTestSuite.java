@@ -1,3 +1,6 @@
+import com.kodilla.sudokukodilla.CanotResolveSudokuException;
+import com.kodilla.sudokukodilla.SudokuData;
+import com.kodilla.sudokukodilla.SudokuGame;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -36,7 +39,7 @@ public class SudokuGameTestSuite {
     }
 
     @Test
-    void checkRowsTest() throws CanotResolveSudokuException{
+    void checkRowsTest() throws CanotResolveSudokuException {
         SudokuGame game = new SudokuGame();
         List<SudokuData> data =new ArrayList<>();
         data.add(new SudokuData(1,3,4));
@@ -99,6 +102,7 @@ public class SudokuGameTestSuite {
         data.add(new SudokuData(1, 2, 5));
         data.add(new SudokuData(3, 3, 7));
         game.setTheBoard(data);
+        System.out.println(game.getBoard());
         //When & Then
         Assertions.assertThrows(CanotResolveSudokuException.class, () -> game.checkRows());
 
@@ -160,6 +164,7 @@ public class SudokuGameTestSuite {
         data.add(new SudokuData(1, 2, 5));
         data.add(new SudokuData(3, 5, 7));
         game.setTheBoard(data);
+        System.out.println(game.getBoard());
         //When & Then
         Assertions.assertThrows(CanotResolveSudokuException.class, () -> game.checkColumns());
 
@@ -169,13 +174,14 @@ public class SudokuGameTestSuite {
         //Given
         SudokuGame game = new SudokuGame();
         List<SudokuData> data = new ArrayList<>();
-        data.add(new SudokuData(1, 3, 4));
-        data.add(new SudokuData(3, 3, 7));
-        data.add(new SudokuData(1, 2, 5));
-        data.add(new SudokuData(3, 2, 7));
+        data.add(new SudokuData(1, 4, 4));
+        data.add(new SudokuData(3, 5, 7));
+        data.add(new SudokuData(1, 5, 5));
+        data.add(new SudokuData(3, 6, 7));
         game.setTheBoard(data);
+        System.out.println(game.getBoard());
         //When & Then
-        Assertions.assertThrows(CanotResolveSudokuException.class,()-> game.fieldCheck(0,0));
+        Assertions.assertThrows(CanotResolveSudokuException.class,()-> game.fieldCheck(0,3));
     }
     @Test
     void checkFieldWithWrongGuessedDataTest() throws CanotResolveSudokuException {

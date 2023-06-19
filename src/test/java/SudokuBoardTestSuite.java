@@ -1,3 +1,6 @@
+import com.kodilla.sudokukodilla.SudokuBoard;
+import com.kodilla.sudokukodilla.SudokuData;
+import com.kodilla.sudokukodilla.SudokuGame;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

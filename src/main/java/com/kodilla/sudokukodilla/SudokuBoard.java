@@ -1,6 +1,7 @@
 package com.kodilla.sudokukodilla;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class SudokuBoard {
@@ -20,17 +21,29 @@ public class SudokuBoard {
     @Override
     public String toString() {
         String result = "";
-        for (SudokuRow row : board ) {
+        for (int i = 0; i < board.size(); i++ ) {
             result += "|";
-            for(SudokuElement element : row.getSudokuRow()) {
+            for(int j = 0; j < board.get(i).getSudokuRow().size(); j++) {
+                SudokuElement element = board.get(i).getSudokuRow().get(j);
                 if(element.getValue() == -1) {
                     result += "   ";
                 } else {
                     result += " "  + element.getValue() + " ";
                 }
-                result +="|";
+                if(j == 2 || j == 5) {
+                    result +="||";
+                } else {
+                    result += "|";
+                }
+
             }
-            result += "\n-------------------------------------\n";
+            if(i == 2 || i == 5) {
+                result += "\n---------------------------------------\n" + "---------------------------------------\n";
+            }else {
+                result += "\n---------------------------------------\n";
+            }
+
+
         }
         return result;
     }
@@ -39,7 +52,11 @@ public class SudokuBoard {
         for(int y = 0; y < this.board.size(); y++) {
             SudokuRow clonedRow = new SudokuRow();
             for(int x = 0; x < this.board.size(); x++) {
-                clonedRow.getSudokuRow().set(x, new SudokuElement(this.board.get(y).getSudokuRow().get(x).getValue(), this.board.get(y).getSudokuRow().get(x).getPossibleNumbers()));
+                List<Integer> clonedNumbers = new LinkedList<>();
+                for(int number :this.board.get(y).getSudokuRow().get(x).getPossibleNumbers()) {
+                    clonedNumbers.add(number);
+                }
+                clonedRow.getSudokuRow().set(x, new SudokuElement(this.board.get(y).getSudokuRow().get(x).getValue(), clonedNumbers));
             }
             clonedBoard.getBoard().set(y, clonedRow);
         }

@@ -1,3 +1,5 @@
+import com.kodilla.sudokukodilla.ConsoleHandler;
+import com.kodilla.sudokukodilla.SudokuData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

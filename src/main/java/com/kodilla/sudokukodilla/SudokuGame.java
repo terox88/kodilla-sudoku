@@ -2,11 +2,13 @@ package com.kodilla.sudokukodilla;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class SudokuGame {
     private SudokuBoard board;
     private final ConsoleHandler handler;
     private List<BackupBoard> backtrack = new ArrayList<>();
+    private long counter =0l;
 
     public SudokuGame() {
         this.board = new SudokuBoard();
@@ -89,7 +91,6 @@ public class SudokuGame {
                         if (board.getBoard().get(y).getSudokuRow().get(x).getValue() == element.getValue() && board.getBoard().get(y).getSudokuRow().get(x) != element) {
                             throw new CanotResolveSudokuException();
                         }
-
                     }
                 }
             }
@@ -120,7 +121,6 @@ public class SudokuGame {
                         board.getBoard().get(y).getSudokuRow().get(x).enterValue();
                         result = true;
                     }
-
                 } else {
                     for (int i = beginY; i < beginY + 3; i++) {
                         for (int j = beginX; j < beginX + 3; j++) {
@@ -169,22 +169,20 @@ public class SudokuGame {
         return data;
     }
 
+
     public void restoreBoard(BackupBoard restoredBoard) {
-        board = restoredBoard.getBackupBoard();
-        int x = restoredBoard.getGuessedElement().getX();
-        int y = restoredBoard.getGuessedElement().getY();
-        int value = restoredBoard.getGuessedElement().getValue();
-        if (board.getBoard().get(y).getSudokuRow().get(x).getPossibleNumbers().size() > 1) {
-            board.getBoard().get(y).getSudokuRow().get(x).getPossibleNumbers().remove(Integer.valueOf(value));
-        }
-        backtrack.remove(restoredBoard);
-
+            board = restoredBoard.getBackupBoard();
+            int x = restoredBoard.getGuessedElement().getX();
+            int y = restoredBoard.getGuessedElement().getY();
+            int value = restoredBoard.getGuessedElement().getValue();
+            if (board.getBoard().get(y).getSudokuRow().get(x).getPossibleNumbers().size() > 1) {
+                board.getBoard().get(y).getSudokuRow().get(x).getPossibleNumbers().remove(Integer.valueOf(value));
+            }
+            backtrack.remove(restoredBoard);
     }
-
     public void backupMaking(SudokuData data) {
         backtrack.add(new BackupBoard(board.deepCopy(), data));
     }
-
     public void guessing(SudokuData data) {
         board.getBoard().get(data.getY()).getSudokuRow().get(data.getX()).setValue(data.getValue());
     }
@@ -192,37 +190,46 @@ public class SudokuGame {
     public boolean sudokuResolve() {
         boolean isResolved = false;
         while (!isResolved) {
-            board = new SudokuBoard();
+            System.out.println("\n" + board);
             String userData = handler.getUserData().toUpperCase();
             if (userData.equals("SUDOKU")) {
                 boolean end = false;
                 while (!end) {
                     boolean boardCheck = false;
+                    counter++;
                     try {
                         boardCheck = allCheck();
                     } catch (CanotResolveSudokuException e) {
                         if (backtrack.size() > 0) {
-                            restoreBoard(backtrack.get(0));
+                            restoreBoard(backtrack.get(backtrack.size()-1));
                         } else {
                             System.out.println("This sudoku cannot be solved");
                             end = true;
+                            backtrack.clear();
+                            board = new SudokuBoard();
+                            isResolved = handler.newSudoku();
                         }
                     }
-                    if (boardCheck) {
+                    if (boardCheck && !end) {
                         end = isResolved();
 
-                    } else {
+                    } else if(!boardCheck && !end) {
                         SudokuData data = findGuessedValue();
                         backupMaking(data);
                         guessing(data);
                     }
 
-                }
-                System.out.println("This is yours sudoku solved");
-                System.out.println();
-                System.out.println(board);
-                isResolved = handler.newSudoku();
 
+                }
+                if(isResolved()) {
+                    System.out.println("This is yours sudoku solved. It's takes " + counter + " loops do solve");
+                    System.out.println();
+                    System.out.println(board);
+                    backtrack.clear();
+                    board = new SudokuBoard();
+                    counter = 0;
+                    isResolved = handler.newSudoku();
+                }
 
             } else {
                 List<SudokuData> sudokuData = new ArrayList<>();
@@ -236,7 +243,6 @@ public class SudokuGame {
                     }
                 }
                 setTheBoard(sudokuData);
-                System.out.println(board);
             }
 
         }
