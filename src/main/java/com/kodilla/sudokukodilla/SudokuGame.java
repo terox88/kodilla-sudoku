@@ -155,22 +155,25 @@ public class SudokuGame {
     }
 
     public SudokuData findGuessedValue() {
-        SudokuElement element = new SudokuElement(-1, List.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9));
-        SudokuData data = null;
-        for (int y = 0; y < board.getBoard().size(); y++) {
-            for (int x = 0; x < board.getBoard().size(); x++) {
-                if (board.getBoard().get(y).getSudokuRow().get(x).getValue() == -1 && board.getBoard().get(y).getSudokuRow().get(x).getPossibleNumbers().size() < element.getPossibleNumbers().size()) {
-                    element = board.getBoard().get(y).getSudokuRow().get(x);
-                    data = new SudokuData(x, y, element.getPossibleNumbers().get(0));
-
-                }
+        SudokuElement element;
+        Random random = new Random();
+        while(true) {
+            int x = random.nextInt(9);
+            int y = random.nextInt(9);
+            if (board.getBoard().get(y).getSudokuRow().get(x).getValue() == -1) {
+                element = board.getBoard().get(y).getSudokuRow().get(x);
+                return new SudokuData(x, y, element.getPossibleNumbers().get(random.nextInt(element.getPossibleNumbers().size())));
             }
         }
-        return data;
     }
 
 
     public void restoreBoard(BackupBoard restoredBoard) {
+        if(counter > 2000) {
+            board = backtrack.get(0).getBackupBoard();
+            backtrack.clear();
+            counter = 0;
+        }else {
             board = restoredBoard.getBackupBoard();
             int x = restoredBoard.getGuessedElement().getX();
             int y = restoredBoard.getGuessedElement().getY();
@@ -179,6 +182,8 @@ public class SudokuGame {
                 board.getBoard().get(y).getSudokuRow().get(x).getPossibleNumbers().remove(Integer.valueOf(value));
             }
             backtrack.remove(restoredBoard);
+        }
+
     }
     public void backupMaking(SudokuData data) {
         backtrack.add(new BackupBoard(board.deepCopy(), data));
@@ -194,6 +199,7 @@ public class SudokuGame {
             String userData = handler.getUserData().toUpperCase();
             if (userData.equals("SUDOKU")) {
                 boolean end = false;
+                backtrack.add(new BackupBoard(board.deepCopy(), new SudokuData(0,0,0)));
                 while (!end) {
                     boolean boardCheck = false;
                     counter++;
@@ -222,7 +228,7 @@ public class SudokuGame {
 
                 }
                 if(isResolved()) {
-                    System.out.println("This is yours sudoku solved. It took " + counter + " loops do solve");
+                    System.out.println("This is yours sudoku solved. It took " + counter + " loops to solve");
                     System.out.println();
                     System.out.println(board);
                     backtrack.clear();
