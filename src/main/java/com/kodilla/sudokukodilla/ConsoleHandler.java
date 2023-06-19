@@ -8,7 +8,7 @@ public class ConsoleHandler {
     private Scanner scanner = new Scanner(System.in);
 
     public String getUserData() {
-        System.out.println("Enter data for sudoku in order: column, row, value it can be multiply or \"SUDOKU\" for get resolve\n");
+        System.out.println("Enter data for sudoku in order: column, row, value it can be multiply or \"SUDOKU\" for get resolve");
         return scanner.nextLine();
     }
     public boolean newSudoku() {

@@ -222,7 +222,7 @@ public class SudokuGame {
 
                 }
                 if(isResolved()) {
-                    System.out.println("This is yours sudoku solved. It's takes " + counter + " loops do solve");
+                    System.out.println("This is yours sudoku solved. It took " + counter + " loops do solve");
                     System.out.println();
                     System.out.println(board);
                     backtrack.clear();
