@@ -169,7 +169,7 @@ public class SudokuGame {
 
 
     public void restoreBoard(BackupBoard restoredBoard) {
-        if(counter > 2000) {
+        if(counter > 1000) {
             board = backtrack.get(0).getBackupBoard();
             backtrack.clear();
             counter = 0;
@@ -206,7 +206,7 @@ public class SudokuGame {
                     try {
                         boardCheck = allCheck();
                     } catch (CanotResolveSudokuException e) {
-                        if (backtrack.size() > 0) {
+                        if (backtrack.size() > 1) {
                             restoreBoard(backtrack.get(backtrack.size()-1));
                         } else {
                             System.out.println("This sudoku cannot be solved");
