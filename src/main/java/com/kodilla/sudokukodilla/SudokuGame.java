@@ -172,6 +172,7 @@ public class SudokuGame {
         if(counter > 1000) {
             board = backtrack.get(0).getBackupBoard();
             backtrack.clear();
+            backtrack.add(new BackupBoard(board.deepCopy(), new SudokuData(0, 0, 0)));
             counter = 0;
         }else {
             board = restoredBoard.getBackupBoard();
